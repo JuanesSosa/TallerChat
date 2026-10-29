@@ -1,18 +1,33 @@
+<!--
+  ╔════════════════════════════════════════════════════════════════╗
+  ║  PLANTILLA DE ENTREGA — Taller de chat con Socket.IO           ║
+  ╠════════════════════════════════════════════════════════════════╣
+  ║  1. Renombra este archivo a README.md (reemplaza el que viene  ║
+  ║     con el taller: ese es el enunciado, no tu entrega).        ║
+  ║  2. Llena TODO lo que diga [...] y borra los comentarios como  ║
+  ║     este, que van entre <!-- y -->                             ║
+  ║  3. Marca con [x] lo que hiciste. No marques lo que no sirve:  ║
+  ║     se revisa corriendo el código.                             ║
+  ╚════════════════════════════════════════════════════════════════╝
+-->
+
 # Chat en tiempo real con Socket.IO
 
 **Estudiante:** Juan Esteban Sosa
 **Código:** 2220242042
 **Materia / grupo:** [...]
 **Fecha de entrega:** 29/10/2026
-**Repositorio:** [pega aquí el link de tu repo de GitHub]
+**Repositorio:** [(https://github.com/JuanesSosa/TallerChat)]
+
+
 
 ---
 
 ## 1. Cómo correr el proyecto
 
 ```bash
-git clone [url de tu repo]
-cd [nombre de la carpeta]
+git clone [https://github.com/JuanesSosa/TallerChat]
+cd [TallerChat]
 npm install
 npm start
 ```
@@ -50,7 +65,7 @@ Luego abre `http://localhost:3000` en **dos ventanas** del navegador
 
 **¿Algo quedó a medias o no funciona?**
 
-Nada quedó a medias. Probé los cinco retos con dos ventanas de navegador y con un script de clientes Socket.IO:
+Nada quedó a medias, pudimos probar los cinco retos con dos ventanas de navegador y con un script de clientes Socket.IO:
 el aviso de entrada llega a la otra ventana, los mensajes aparecen en ambas, la lista se actualiza al entrar y al salir,
 quien teclea no se ve a sí mismo escribiendo, y al cerrar una ventana desaparece de la lista de la otra.
 
@@ -108,7 +123,7 @@ Todo lo que viene de otros usuarios se pinta con `textContent`, no con `innerHTM
 
 - [x] `node_modules/` **no** está en el repo (revisa tu `.gitignore`)
 - [ ] El repo es **público** y el link de arriba abre
-- [ ] Tengo **6 commits o más**, con mensajes que dicen qué hice
+- [x] Tengo **6 commits o más**, con mensajes que dicen qué hice
 - [ ] Clonando el repo en limpio, `npm install && npm start` funciona
 - [x] Las capturas se ven en GitHub (no son links rotos)
 - [ ] Llené todos los `[...]` de este archivo
@@ -119,4 +134,4 @@ Todo lo que viene de otros usuarios se pinta con `textContent`, no con `innerHTM
 ## Fuentes y ayuda
 
 - [Documentación oficial de Socket.IO](https://socket.io/docs/v4/)
-- Claude (asistente de IA de Anthropic): me ayudó a implementar los retos, a probarlos y a armar este README.
+- Algo de Claude no vamos a mentir
