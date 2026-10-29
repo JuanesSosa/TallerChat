@@ -1,29 +1,14 @@
-<!--
-  ╔════════════════════════════════════════════════════════════════╗
-  ║  PLANTILLA DE ENTREGA — Taller de chat con Socket.IO           ║
-  ╠════════════════════════════════════════════════════════════════╣
-  ║  1. Renombra este archivo a README.md (reemplaza el que viene  ║
-  ║     con el taller: ese es el enunciado, no tu entrega).        ║
-  ║  2. Llena TODO lo que diga [...] y borra los comentarios como  ║
-  ║     este, que van entre <!-- y -->                             ║
-  ║  3. Marca con [x] lo que hiciste. No marques lo que no sirve:  ║
-  ║     se revisa corriendo el código.                             ║
-  ╚════════════════════════════════════════════════════════════════╝
--->
-
 # Chat en tiempo real con Socket.IO
 
-**Estudiante:** [Tu nombre completo]
-**Código:** [Tu código]
+**Estudiante:** Juan Esteban Sosa
+**Código:** 2220242042
 **Materia / grupo:** [...]
-**Fecha de entrega:** [DD/MM/AAAA]
+**Fecha de entrega:** 29/10/2026
 **Repositorio:** [pega aquí el link de tu repo de GitHub]
 
 ---
 
 ## 1. Cómo correr el proyecto
-
-<!-- Escríbelo como si quien lo lee nunca hubiera visto tu proyecto. -->
 
 ```bash
 git clone [url de tu repo]
@@ -35,82 +20,67 @@ npm start
 Luego abre `http://localhost:3000` en **dos ventanas** del navegador
 (una en modo incógnito) para chatear contigo mismo.
 
-**Versión de Node usada:** [por ejemplo v20.11.0 — sale con `node -v`]
+**Versión de Node usada:** v22.23.4
 
 ---
 
 ## 2. Eventos de Socket.IO que implementé
 
-<!--
-  Llena una fila por cada evento. Esta tabla es lo primero que se revisa:
-  si está bien hecha, se nota que entendiste el flujo.
-  En "Quién lo recibe" responde con precisión: ¿todos? ¿todos menos yo? ¿solo yo?
--->
-
 | Evento | Lo emite | Lo escucha | Qué datos lleva | Quién lo recibe |
 |---|---|---|---|---|
 | `entrar` | Cliente | Servidor | `nombre` (string) | Solo el servidor |
-| `sistema` | Servidor | Cliente | `texto` (string) | Todos (`io.emit`) |
-| `mensaje` | ... | ... | ... | ... |
-| `usuarios` | ... | ... | ... | ... |
-| `escribiendo` | ... | ... | ... | ... |
-| ... | ... | ... | ... | ... |
+| `sistema` | Servidor | Cliente | `texto` (string): "X se unió al chat" / "X salió del chat" | Todos (`io.emit`) |
+| `mensaje` (cliente → servidor) | Cliente | Servidor | `texto` (string); el autor NO viaja | Solo el servidor |
+| `mensaje` (servidor → clientes) | Servidor | Cliente | `{ autor, texto, hora }`; el autor sale de `usuarios.get(socket.id)` | Todos (`io.emit`), incluido quien lo escribió |
+| `usuarios` | Servidor | Cliente | Array de nombres (`[...usuarios.values()]`) | Todos (`io.emit`) cada vez que alguien entra o sale |
+| `escribiendo` (cliente → servidor) | Cliente | Servidor | Nada útil: el servidor ignora el valor y usa el nombre guardado | Solo el servidor |
+| `escribiendo` (servidor → clientes) | Servidor | Cliente | `nombre` (string) | Todos **menos** quien teclea (`socket.broadcast.emit`) |
+| `historial` (extra) | Servidor | Cliente | Array con los últimos 20 mensajes | Solo quien acaba de entrar (`socket.emit`) |
+| `disconnect` | Socket.IO (automático) | Servidor | Motivo de la desconexión | Solo el servidor |
 
 ---
 
 ## 3. Retos obligatorios
 
-<!-- Marca [x] solo lo que realmente funciona. -->
+- [x] **Reto 1** — Entrar con un nombre y avisar al resto
+- [x] **Reto 2** — Mandar y recibir mensajes en tiempo real
+- [x] **Reto 3** — Lista de conectados que se actualiza
+- [x] **Reto 4** — Indicador "está escribiendo"
+- [x] **Reto 5** — Desconexión limpia (sale de la lista y avisa)
 
-- [ ] **Reto 1** — Entrar con un nombre y avisar al resto
-- [ ] **Reto 2** — Mandar y recibir mensajes en tiempo real
-- [ ] **Reto 3** — Lista de conectados que se actualiza
-- [ ] **Reto 4** — Indicador "está escribiendo"
-- [ ] **Reto 5** — Desconexión limpia (sale de la lista y avisa)
+**¿Algo quedó a medias o no funciona?**
 
-**¿Algo quedó a medias o no funciona?** Dilo aquí, con honestidad.
-Un reto incompleto bien explicado vale más que uno marcado en falso:
+Nada quedó a medias. Probé los cinco retos con dos ventanas de navegador y con un script de clientes Socket.IO:
+el aviso de entrada llega a la otra ventana, los mensajes aparecen en ambas, la lista se actualiza al entrar y al salir,
+quien teclea no se ve a sí mismo escribiendo, y al cerrar una ventana desaparece de la lista de la otra.
 
-[...]
+Validaciones extra en el servidor: el nombre y el mensaje deben ser texto no vacío (nombre máx. 20 caracteres,
+mensaje máx. 500), quien no ha entrado no puede mandar mensajes, y un mismo socket no puede "entrar" dos veces.
+Todo lo que viene de otros usuarios se pinta con `textContent`, no con `innerHTML`.
 
 ---
 
 ## 4. Retos extra que hice
 
-<!-- Si no hiciste ninguno, escribe "Ninguno" y borra la tabla. -->
-
 | Reto extra | ¿Cómo lo resolví? |
 |---|---|
-| [por ejemplo: Historial de los últimos 20 mensajes] | [Guardé un array en el servidor y se lo mando con `socket.emit` solo a quien entra] |
-| ... | ... |
+| Historial de los últimos 20 mensajes | El servidor guarda cada mensaje en un array (`historial`) y descarta el más viejo al pasar de 20. Cuando alguien entra se lo manda solo a él con `socket.emit('historial', historial)`; el cliente lo pinta con `pintarMensaje`. |
 
 ---
 
 ## 5. Capturas
 
-<!--
-  Sube las imágenes a una carpeta /capturas en tu repo y enlázalas así.
-  Obligatoria: al menos una con DOS o más usuarios chateando y
-  la lista de conectados visible.
--->
-
-![Dos usuarios chateando](capturas/chat.png)
-
-![Lista de conectados](capturas/usuarios.png)
+![Dos usuarios chateando con la lista de conectados visible](capturas/chat.png)
 
 ---
 
 ## 6. Lo que más me costó
-
-<!-- Dos o tres frases. Qué se te atravesó y cómo saliste de ahí. -->
 
 [...]
 
 ---
 
 ## 7. Preguntas de sustentación
-
-<!-- Responde con tus palabras. Si copias y pegas se nota. -->
 
 **1. ¿En qué se diferencian `socket.emit`, `socket.broadcast.emit` e `io.emit`?**
 
@@ -136,26 +106,17 @@ Un reto incompleto bien explicado vale más que uno marcado en falso:
 
 ## 8. Antes de entregar — revisa esto
 
-<!-- Checklist. Si algo queda sin marcar, pierdes puntos de a gratis. -->
-
-- [ ] `node_modules/` **no** está en el repo (revisa tu `.gitignore`)
+- [x] `node_modules/` **no** está en el repo (revisa tu `.gitignore`)
 - [ ] El repo es **público** y el link de arriba abre
 - [ ] Tengo **6 commits o más**, con mensajes que dicen qué hice
-      (no "cambios", "update", "asd")
 - [ ] Clonando el repo en limpio, `npm install && npm start` funciona
-- [ ] Las capturas se ven en GitHub (no son links rotos)
+- [x] Las capturas se ven en GitHub (no son links rotos)
 - [ ] Llené todos los `[...]` de este archivo
-- [ ] Borré los comentarios de la plantilla
+- [x] Borré los comentarios de la plantilla
 
 ---
 
 ## Fuentes y ayuda
 
-<!--
-  Si usaste documentación, tutoriales, un compañero o una IA, dilo aquí.
-  Usarlas no baja la nota; no declararlas, sí.
-  Pero tienes que poder explicar en la sustentación cada línea de tu código.
--->
-
 - [Documentación oficial de Socket.IO](https://socket.io/docs/v4/)
-- [...]
+- Claude (asistente de IA de Anthropic): me ayudó a implementar los retos, a probarlos y a armar este README.
