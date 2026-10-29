@@ -57,6 +57,16 @@ io.on('connection', (socket) => {
   //        tómalo de `usuarios.get(socket.id)`.
   //
   // socket.on('mensaje', (texto) => { ... });
+  socket.on('mensaje', (texto) => {
+    // El autor lo define el servidor, nunca el cliente.
+    const autor = usuarios.get(socket.id);
+    if (!autor) return; // alguien que no ha entrado no puede escribir
+    if (typeof texto !== 'string') return;
+    texto = texto.trim().slice(0, 500);
+    if (!texto) return;
+
+    io.emit('mensaje', { autor, texto, hora: new Date().toISOString() });
+  });
 
 
   // TODO 3 — Escuchar 'escribiendo' y avisar SOLO a los demás
