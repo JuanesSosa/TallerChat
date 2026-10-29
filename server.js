@@ -71,6 +71,12 @@ io.on('connection', (socket) => {
 
   // TODO 3 — Escuchar 'escribiendo' y avisar SOLO a los demás
   //   (pista: socket.broadcast.emit, no io.emit).
+  socket.on('escribiendo', () => {
+    // Usamos el nombre guardado en el servidor, no el que mande el cliente.
+    const nombre = usuarios.get(socket.id);
+    if (!nombre) return;
+    socket.broadcast.emit('escribiendo', nombre); // a todos MENOS a quien teclea
+  });
 
 
   // TODO 4 — Manejar la desconexión.
