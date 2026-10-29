@@ -38,6 +38,16 @@ io.on('connection', (socket) => {
   //     usando [...usuarios.values()]
   //
   // socket.on('entrar', (nombre) => { ... });
+  socket.on('entrar', (nombre) => {
+    // Validamos: el cliente podría mandar cualquier cosa.
+    if (typeof nombre !== 'string') return;
+    nombre = nombre.trim().slice(0, 20);
+    if (!nombre) return;
+
+    usuarios.set(socket.id, nombre);
+    io.emit('sistema', `${nombre} se unió al chat`);
+    io.emit('usuarios', [...usuarios.values()]);
+  });
 
 
   // TODO 2 — Escuchar el evento 'mensaje' que manda el cliente.
