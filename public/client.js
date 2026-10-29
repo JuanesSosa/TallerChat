@@ -58,6 +58,11 @@ socket.on('mensaje', (data) => {
   pintarMensaje(data);
 });
 
+// EXTRA — Historial: el servidor lo manda solo a quien acaba de entrar.
+socket.on('historial', (lista) => {
+  lista.forEach(pintarMensaje);
+});
+
 // TODO 5 — Escuchar 'sistema' (texto) y pintarlo con pintarSistema(texto).
 socket.on('sistema', (texto) => {
   pintarSistema(texto);

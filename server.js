@@ -23,6 +23,10 @@ app.use(express.static('public'));
 // Lista en memoria de usuarios conectados: socket.id -> nombre
 const usuarios = new Map();
 
+// EXTRA: historial en memoria con los últimos 20 mensajes.
+const MAX_HISTORIAL = 20;
+const historial = [];
+
 // ------------------------------------------------------------
 // io.on('connection') se dispara UNA VEZ por cada cliente que entra.
 // El objeto `socket` representa a ESE cliente en particular.
@@ -43,8 +47,10 @@ io.on('connection', (socket) => {
     if (typeof nombre !== 'string') return;
     nombre = nombre.trim().slice(0, 20);
     if (!nombre) return;
+    if (usuarios.has(socket.id)) return; // ya había entrado: evita avisos duplicados
 
     usuarios.set(socket.id, nombre);
+    socket.emit('historial', historial); // solo a quien entra
     io.emit('sistema', `${nombre} se unió al chat`);
     io.emit('usuarios', [...usuarios.values()]);
   });
@@ -65,7 +71,10 @@ io.on('connection', (socket) => {
     texto = texto.trim().slice(0, 500);
     if (!texto) return;
 
-    io.emit('mensaje', { autor, texto, hora: new Date().toISOString() });
+    const data = { autor, texto, hora: new Date().toISOString() };
+    historial.push(data);
+    if (historial.length > MAX_HISTORIAL) historial.shift();
+    io.emit('mensaje', data);
   });
 
 
